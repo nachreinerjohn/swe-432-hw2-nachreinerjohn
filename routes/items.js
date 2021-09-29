@@ -28,6 +28,7 @@ const getCosmetics = async ()=>{
 
     const cosmeticTemp = await cosmeticBody.json()
 
+    //convert the incoming data into a smaller set of the information we will use
     for(let item of cosmeticTemp.data.items){
         Cosmetics.push(new CosmeticItem(item.name, item.description, item.rarity.value, item.type.value, item.gameplayTags));
     }
@@ -46,6 +47,7 @@ router.get('/', (req, res)=>{
         res.status(503)
         return res.json({error : "Data not ready"});
     }
+    //create an array of items and push the names of every item onto it to return
     let items = []
     for(let item of Cosmetics){
         items.push(item.name);
@@ -71,6 +73,7 @@ router.get('/:itemName', (req, res) => {
 
     const itemName = req.params.itemName;
 
+    //if the item name was inputted, search through the data for that item name
     if(itemName){
         var found = false;
         for(let item of Cosmetics){
@@ -98,10 +101,11 @@ router.post('/', (req, res) =>{
     }
 
     const {name, description, rarity, type, tags} = req.body
-
+    //if all the dat has been input, create a new item with it and put it into the dataset
     if(name && description && rarity && type, tags){
         Cosmetics.push(new CosmeticItem(name, description, rarity, type, tags));
 
+        //print a confirmation message with the new items information
         res.status(201);
         res.send(`Created new Item:\n
         Name : ${Cosmetics[Cosmetics.length-1].name}\n
@@ -126,8 +130,10 @@ router.post('/tag/:itemName', (req, res) =>{
     const itemName = req.params.itemName;
     const tags = req.body.tags
 
+    //if the data was input correctly and the tags are appropriately in array form
     if(itemName && tags && Array.isArray(tags)){
         var found = false;
+        //search for the item to add a tag to
         for(let item of Cosmetics){
             if(item.name == itemName){
                 found = true;
@@ -158,6 +164,7 @@ router.get('/rarity/:rarity', (req, res) =>{
 
     const itemRarity = req.params.rarity;
 
+    //if the input was entered correctly, search through the data for items with the rarity specified
     if(itemRarity){
         for(let item of Cosmetics){
             if(item.rarity == itemRarity){
@@ -183,6 +190,7 @@ router.get('/type/:type', (req, res) =>{
 
     const itemType = req.params.type;
 
+    //if the input was entered correctly, search through the data for items with the type specified
     if(itemType){ 
         for(let item of Cosmetics){
             if(item.type == itemType){
@@ -206,19 +214,23 @@ router.get('/type/:type/rarity', (req, res) =>{
 
     const itemType = req.params.type;
 
+    //if the input was entered correctly, create a map to keep track of how many of each rarity has been encountered
     if(itemType){
         const breakdown = new Map();
 
+        //search through the data for the item type
         for(let item of Cosmetics){
             if(item.type == itemType){
+                //if the map already has seen this rarity, add 1 to how many its seen
                 if(breakdown.has(item.rarity)){
                     breakdown.set(item.rarity, breakdown.get(item.rarity) + 1);
-                }
+                } //if the map has not seen this rarity, add it to the map with the number seen set to 1
                 else{
                     breakdown.set(item.rarity, 1);
                 }
             }
         }
+        //total up the values, then use that to calculate percentages
         let total = 0;
         for(const value of breakdown.values()){
             total += value;
@@ -226,6 +238,7 @@ router.get('/type/:type/rarity', (req, res) =>{
         for(const key of breakdown.keys()){
             breakdown.set(key, (breakdown.get(key)/total)*100 + "%")
         }
+        //turn the map into a json object
         const ret = Object.fromEntries(breakdown);
         res.json(ret);
     }

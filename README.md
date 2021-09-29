@@ -12,16 +12,9 @@
 
 ### Documentation of your 7 Scenarios
 
-*Here please describe your 7 scenarios complete with details about the endpoint and expected output. We provide one example below. If using route parameters, please provide an example API query*
-
-* Retrieve a city from our Washington DC Database
-  * API Endpoint: GET /city/:cityID
-  * Example: GET /city/21
-  * Expected Output: "Fairfax"
-
 * Retrieve a list of new Cosmetic items in the fortnite marketplace
   * API Endpoint: GET /items/
-  *Expected Output (As of 9/29/2021, 6:00am): "[
+  * Expected Output (As of 9/29/2021, 6:00am): "[
                         "Floating Island",
                         "Sockets",
                         "Wolfmoon Crest",
